@@ -7,11 +7,17 @@ pipeline {
               }
           }
         stage('docker-setup') {
-            steps {
-                withDockerRegistry(credentialsId: 'docker-hub-test1', url: 'https://index.docker.io/v1/') {
-                    sh 'docker build -t testing/test1:v1 .'
-                    sh 'docker push -t ashleynguci1412/test1:v1'
+            agent {
+                docker {
+                    image 'gradle:6.7-jdk11'
+                    // Run the container on the node specified at the
+                    // top-level of the Pipeline, in the same workspace,
+                    // rather than on a new node entirely:
+                    reuseNode true
                 }
+            }
+            steps {
+                sh 'gradle --version'
             }
         }
     }
